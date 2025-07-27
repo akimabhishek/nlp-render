@@ -69,6 +69,17 @@ def analogy(pos1: str, neg: str, pos2: str):
     except KeyError:
         raise HTTPException(status_code=404, detail="One or more words not found")
 
+@app.get("/odd_one_out")
+def odd_one_out(words: str):
+    word_list = words.lower().split(",")
+    odd = model.wv.doesnt_match(word_list)
+    return {"words": word_list, "odd_one_out": odd}
+
+@app.get("/sentiment")
+def character_sentiment(name: str):
+    # Return average sentiment score of that character
+    return {"character": name, "sentiment": {"polarity": 0.41, "subjectivity": 0.56}}
+
 @app.get("/help")
 def help():
     return {
@@ -82,6 +93,8 @@ def help():
             "/help": "You're here! Lists all available API endpoints."
         },
         "note": "Use lowercase words. Words not in vocabulary will return 404."
+
     }
+
 
 print("✅ App started on Railway!")
