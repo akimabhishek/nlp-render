@@ -80,9 +80,6 @@ def character_sentiment(name: str):
     # Return average sentiment score of that character
     return {"character": name, "sentiment": {"polarity": 0.41, "subjectivity": 0.56}}
 
-@app.get("/version")
-def version():
-    return {"version": "0.1-beta", "status": "Training continues. DL-based upgrade coming soon."}
 
 from fastapi.responses import StreamingResponse
 import io
@@ -91,9 +88,9 @@ from sklearn.decomposition import PCA
 
 
 @app.get("/visualize_image")
-def visualize_image(char1: str, char2: str, char3: str):
+def visualize_image(character1: str, character2: str, character3: str):
     try:
-        words = [char1.lower(), char2.lower(), char3.lower()]
+        words = [character1.lower(), character2.lower(), character3.lower()]
         vectors = [model.wv[word] for word in words]
 
         pca = PCA(n_components=2)
@@ -103,7 +100,11 @@ def visualize_image(char1: str, char2: str, char3: str):
         for i, word in enumerate(words):
             plt.scatter(reduced[i, 0], reduced[i, 1])
             plt.text(reduced[i, 0] + 0.01, reduced[i, 1] + 0.01, word, fontsize=12)
+
         plt.title("Word2Vec Character Embedding")
+        plt.xlabel("Principal Component 1")  # ✅ X-axis label
+        plt.ylabel("Principal Component 2")  # ✅ Y-axis label
+        plt.grid(True)                       # ✅ Adds grid lines
 
         buf = io.BytesIO()
         plt.savefig(buf, format="png")
@@ -115,6 +116,9 @@ def visualize_image(char1: str, char2: str, char3: str):
     except KeyError:
         raise HTTPException(status_code=404, detail="One or more characters not found")
 
+@app.get("/version")
+def version():
+    return {"version": "0.1-beta", "status": "Training continues. DL-based upgrade coming soon."}
 
 @app.get("/help")
 def help():
