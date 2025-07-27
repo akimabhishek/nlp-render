@@ -88,23 +88,24 @@ from sklearn.decomposition import PCA
 
 
 @app.get("/visualize_image")
-def visualize_image(character1: str, character2: str, character3: str):
+def visualize_image(characters: str):
     try:
-        words = [character1.lower(), character2.lower(), character3.lower()]
+        words = [w.strip().lower() for w in characters.split(",")]
         vectors = [model.wv[word] for word in words]
 
         pca = PCA(n_components=2)
         reduced = pca.fit_transform(vectors)
 
-        plt.figure(figsize=(6, 6))
+        plt.figure(figsize=(7, 6))
         for i, word in enumerate(words):
-            plt.scatter(reduced[i, 0], reduced[i, 1])
+            plt.scatter(reduced[i, 0], reduced[i, 1], label=word)
             plt.text(reduced[i, 0] + 0.01, reduced[i, 1] + 0.01, word, fontsize=12)
 
         plt.title("Word2Vec Character Embedding")
-        plt.xlabel("Principal Component 1")  # ✅ X-axis label
-        plt.ylabel("Principal Component 2")  # ✅ Y-axis label
-        plt.grid(True)                       # ✅ Adds grid lines
+        plt.xlabel("Principal Component 1")
+        plt.ylabel("Principal Component 2")
+        plt.grid(True)
+        plt.legend()
 
         buf = io.BytesIO()
         plt.savefig(buf, format="png")
@@ -113,8 +114,9 @@ def visualize_image(character1: str, character2: str, character3: str):
 
         return StreamingResponse(buf, media_type="image/png")
 
-    except KeyError:
-        raise HTTPException(status_code=404, detail="One or more characters not found")
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=f"Word not found: {e}")
+
 
 @app.get("/version")
 def version():
