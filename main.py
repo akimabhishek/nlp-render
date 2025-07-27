@@ -29,29 +29,29 @@ def root():
     return {"message": "Friends Word2Vec API"}
 
 @app.get("/similar")
-def similar(word: str, topn: int = 5):
+def similar(character: str, topn: int = 5):
     try:
-        similar_words = model.wv.most_similar(word.lower(), topn=topn)
-        return {"word": word, "similar": similar_words}
+        similar_words = model.wv.most_similar(character.lower(), topn=topn)
+        return {"Character": character, "similar": similar_words}
     except KeyError:
-        raise HTTPException(status_code=404, detail=f"'{word}' not in vocabulary")
+        raise HTTPException(status_code=404, detail=f"'{character}' not in vocabulary")
 
 @app.get("/similarity")
-def similarity(word1: str, word2: str):
+def similarity(character1: str, character2: str):
     try:
-        sim = model.wv.similarity(word1.lower(), word2.lower()) * 100
-        return {"word1": word1, "word2": word2, "similarity": sim}
+        sim = model.wv.similarity(character1.lower(), character2.lower()) * 100
+        return {"Character 1": character1, "Character 2": character2, "similarity": sim}
     except KeyError:
         raise HTTPException(status_code=404, detail="One or both words not in vocabulary")
 
 @app.get("/traits")
-def traits(name: str, topn: int = 5):
+def traits(character: str, topn: int = 5):
     try:
-        similar_words = model.wv.most_similar(name.lower(), topn=topn)
-        traits = [word for word, _ in similar_words]
-        return {"character": name, "traits": traits}
+        similar_words = model.wv.most_similar(character.lower(), topn=topn)
+        traits = [character for character, _ in similar_words]
+        return {"character": character, "traits": traits}
     except KeyError:
-        raise HTTPException(status_code=404, detail=f"'{name}' not in vocabulary")
+        raise HTTPException(status_code=404, detail=f"'{character}' not in vocabulary")
 
 @app.get("/match")
 def match(name: str, topn: int = 3):
@@ -62,16 +62,16 @@ def match(name: str, topn: int = 3):
         raise HTTPException(status_code=404, detail="Character not in vocabulary")
 
 @app.get("/analogy")
-def analogy(pos1: str, neg: str, pos2: str):
+def analogy(positive_character: str, negative_character: str):
     try:
-        result = model.wv.most_similar(positive=[pos1, pos2], negative=[neg], topn=1)
+        result = model.wv.most_similar(positive=[positive_character], negative=[negative_character], topn=1)
         return {"result": result}
     except KeyError:
         raise HTTPException(status_code=404, detail="One or more words not found")
 
 @app.get("/odd_one_out")
-def odd_one_out(words: str):
-    word_list = words.lower().split(",")
+def odd_one_out(characters: str):
+    word_list = characters.lower().split(",")
     odd = model.wv.doesnt_match(word_list)
     return {"words": word_list, "odd_one_out": odd}
 
@@ -80,16 +80,46 @@ def character_sentiment(name: str):
     # Return average sentiment score of that character
     return {"character": name, "sentiment": {"polarity": 0.41, "subjectivity": 0.56}}
 
+
+from fastapi.responses import StreamingResponse
+import io
+import matplotlib.pyplot as plt
+
+@app.get("/visualize_image")
+def visualize_image(char1: str, char2: str, char3: str):
+    try:
+        words = [char1.lower(), char2.lower(), char3.lower()]
+        vectors = [model.wv[word] for word in words]
+
+        pca = PCA(n_components=2)
+        reduced = pca.fit_transform(vectors)
+
+        plt.figure(figsize=(6, 6))
+        for i, word in enumerate(words):
+            plt.scatter(reduced[i, 0], reduced[i, 1])
+            plt.text(reduced[i, 0] + 0.01, reduced[i, 1] + 0.01, word, fontsize=12)
+        plt.title("Word2Vec Character Embedding")
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png")
+        buf.seek(0)
+        plt.close()
+
+        return StreamingResponse(buf, media_type="image/png")
+
+    except KeyError:
+        raise HTTPException(status_code=404, detail="One or more characters not found")
+
+
 @app.get("/help")
 def help():
     return {
         "message": "Welcome to the Friends Word2Vec API. Here are the available endpoints:",
         "endpoints": {
             "/": "Health check. Returns a welcome message.",
-            "/similar?word=WORD&topn=N": "Returns top N similar words to the given WORD.",
-            "/similarity?word1=WORD1&word2=WORD2": "Returns similarity score between WORD1 and WORD2.",
-            "/traits?name=NAME&topn=N": "Returns N traits (similar words) for a character NAME.",
-            "/match?positive=WORD&candidates=word1,word2": "Finds best match for WORD from a list of candidate words.",
+            "/similar?character=Character Name&topn=N": "Returns top N similar words to the given Character.",
+            "/similarity?character1=Character 1&character2=Character 2": "Returns similarity score between Character 1 and Character 2.",
+            "/analogy?positive=word1&negative=word2": "Performs word arithmetic using positive and negative words.",
             "/help": "You're here! Lists all available API endpoints."
         },
         "note": "Use lowercase words. Words not in vocabulary will return 404."
