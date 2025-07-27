@@ -20,3 +20,37 @@ Thumbs.db
 *.model
 *.pkl
 *.csv
+
+🟢 Initial Setup
+bash
+Copy
+Edit
+git init                        # Initialize Git repo
+git remote add origin <url>    # Link to GitHub repo
+🟢 Pushing Code
+bash
+Copy
+Edit
+git add .                      # Stage all changes
+git commit -m "initial commit" # Add commit message
+git push -u origin main        # Push to main branch (first time)
+🟡 Updating Code
+bash
+Copy
+Edit
+git status                     # See modified/untracked files
+git add <filename>            # Stage specific file
+git commit -m "update message"
+git push                      # Push updates
+🔴 Deleting a File
+bash
+Copy
+Edit
+git rm <filename>             # Remove file and stage deletion
+git commit -m "delete <filename>"
+git push
+🔄 Pull Latest Changes
+bash
+Copy
+Edit
+git pull origin main

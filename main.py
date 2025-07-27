@@ -132,6 +132,7 @@ def help():
             "/similarity?character1=Character_1&character2=Character_2": "Returns similarity score between Character 1 and Character 2.",
             "/analogy?positive_character=Character_1&negative_character=Character_2": "Performs word arithmetic with character analogy.",
             "/visualize_image?characters=character1,character2,character3...": "Returns a 2D graph showing relation between 3 characters.",
+            "/odd_one_out?characters=character1,character2...": "Returns the odd one out from the characters",
             "/version": "Return the version of the product.",
             "/help": "You're here! Lists all available API endpoints."
         },
