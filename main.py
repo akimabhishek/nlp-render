@@ -80,10 +80,15 @@ def character_sentiment(name: str):
     # Return average sentiment score of that character
     return {"character": name, "sentiment": {"polarity": 0.41, "subjectivity": 0.56}}
 
+@app.get("/version")
+def version():
+    return {"version": "0.1-beta", "status": "Training continues. DL-based upgrade coming soon."}
 
 from fastapi.responses import StreamingResponse
 import io
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
 
 @app.get("/visualize_image")
 def visualize_image(char1: str, char2: str, char3: str):
@@ -119,7 +124,9 @@ def help():
             "/": "Health check. Returns a welcome message.",
             "/similar?character=Character Name&topn=N": "Returns top N similar words to the given Character.",
             "/similarity?character1=Character 1&character2=Character 2": "Returns similarity score between Character 1 and Character 2.",
-            "/analogy?positive=word1&negative=word2": "Performs word arithmetic using positive and negative words.",
+            "/analogy?positive_character=...&negative_character=...": "Performs word arithmetic with character analogy.",
+            "/visualize_image?char1=...&char2=...&char3=...": "Returns a 2D graph showing relation between 3 characters.",
+            "/version": "Return the version of the product.",
             "/help": "You're here! Lists all available API endpoints."
         },
         "note": "Use lowercase words. Words not in vocabulary will return 404."
