@@ -128,10 +128,10 @@ def help():
         "message": "Welcome to the Friends Word2Vec API. Here are the available endpoints:",
         "endpoints": {
             "/": "Health check. Returns a welcome message.",
-            "/similar?character=Character Name&topn=N": "Returns top N similar words to the given Character.",
-            "/similarity?character1=Character 1&character2=Character 2": "Returns similarity score between Character 1 and Character 2.",
-            "/analogy?positive_character=...&negative_character=...": "Performs word arithmetic with character analogy.",
-            "/visualize_image?char1=...&char2=...&char3=...": "Returns a 2D graph showing relation between 3 characters.",
+            "/similar?character=Character_Name&topn=N": "Returns top N similar words to the given Character.",
+            "/similarity?character1=Character_1&character2=Character_2": "Returns similarity score between Character 1 and Character 2.",
+            "/analogy?positive_character=Character_1&negative_character=Character_2": "Performs word arithmetic with character analogy.",
+            "/visualize_image?characters=character1,character2,character3...": "Returns a 2D graph showing relation between 3 characters.",
             "/version": "Return the version of the product.",
             "/help": "You're here! Lists all available API endpoints."
         },
