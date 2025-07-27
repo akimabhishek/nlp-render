@@ -78,7 +78,6 @@ def help():
             "/similar?word=WORD&topn=N": "Returns top N similar words to the given WORD.",
             "/similarity?word1=WORD1&word2=WORD2": "Returns similarity score between WORD1 and WORD2.",
             "/traits?name=NAME&topn=N": "Returns N traits (similar words) for a character NAME.",
-            "/analogy?positive=word1,word2&negative=word3": "Performs word analogy using positive and negative words.",
             "/match?positive=WORD&candidates=word1,word2": "Finds best match for WORD from a list of candidate words.",
             "/help": "You're here! Lists all available API endpoints."
         },
