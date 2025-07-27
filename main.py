@@ -52,3 +52,21 @@ def traits(name: str, topn: int = 5):
         return {"character": name, "traits": traits}
     except KeyError:
         raise HTTPException(status_code=404, detail=f"'{name}' not in vocabulary")
+
+@app.get("/match")
+def match(name: str, topn: int = 3):
+    try:
+        matches = model.wv.most_similar(name.lower(), topn=topn)
+        return {"character": name, "most_similar_characters": matches}
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Character not in vocabulary")
+
+@app.get("/analogy")
+def analogy(pos1: str, neg: str, pos2: str):
+    try:
+        result = model.wv.most_similar(positive=[pos1, pos2], negative=[neg], topn=1)
+        return {"result": result}
+    except KeyError:
+        raise HTTPException(status_code=404, detail="One or more words not found")
+
+print("✅ App started on Railway!")
